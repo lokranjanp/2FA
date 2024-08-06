@@ -3,11 +3,13 @@ import random
 import json
 
 def generate_otp(user_secret):
+    """generates otp for a user using their stored secret key"""
     counter = random.randint(0, 696969)
     hotp = pyotp.HOTP(user_secret)
     return hotp.at(counter)
 
 def cache_otp(r, username, otp):
+    """Caches the OTP and username in Redis"""
     user_data = {
         "otp": otp,
         "username": username

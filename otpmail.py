@@ -4,6 +4,7 @@ import dotenv
 path = ".env"
 
 def send_mail(recipient_email, otp):
+    """Sends an email to recipient's email with the OTP for 2FA"""
     EMAIL_ADDRESS = dotenv.get_key(path, "EMAIL_ADDRESS")
     EMAIL_PASSWORD = dotenv.get_key(path, "EMAIL_PASSWORD")
     SMTP_SERVER = dotenv.get_key(path, "SMTP_SERVER")
