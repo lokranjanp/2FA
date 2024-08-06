@@ -1,9 +1,10 @@
 import dotenv
-import pyotp
+import redis
 import mysql.connector
 from mysql.connector import *
 from datetime import datetime
 import bcrypt
+from otp import *
 
 def hash_password(password):
     """Returns a hashed password during user auth detail registrations"""
@@ -36,7 +37,7 @@ def create_connection():
         return connection
 
     except Error as e:
-        print(f"Error: {e}")
+        print(f"Database Connection FAILED. Error: {e}")
         return None
 
 def register_user(username, email, password):
@@ -57,7 +58,7 @@ def register_user(username, email, password):
         return True
 
     except Error as e:
-        print(f"Error: {e}")
+        print(f"Registration Failed. Error: {e}")
         return False
 
     finally:
@@ -72,7 +73,7 @@ def validate_user(username, password):
 
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT u.password_hash, u.user_salt FROM users u WHERE username = %s", (username,))
+        cursor.execute("SELECT u.password_hash, u.user_salt FROM users u WHERE u.username = %s", (username,))
         user = cursor.fetchone()
 
         if user:
@@ -80,12 +81,31 @@ def validate_user(username, password):
             return authenticate_user(stored_hash, password)
 
     except Error as e:
-        print(f"Error: {e}")
+        print(f"Password auth failed. Error: {e}")
         return False
 
     finally:
         cursor.close()
         connection.close()
 
+def validate_user_2FA(username, otp):
+    """User validation with 2FA"""
+    r = redis.StrictRedis(host='localhost', port=6379, db=7)
+
+    try:
+        if verify_otp(r, username, otp):
+            print(f"OTP AUTH successful.")
+            return True
+
+    except Error as e:
+        print(f"OTP AUTH failed.")
+        return False
+
+
 # print(register_user("pookie", "test@gmail.com", "password"))
-print(validate_user("pookie", "password"))
+r = redis.StrictRedis(host='localhost', port=6379, db=7)
+secret = "M7XMKKHO3AJBFNI6VAMCZWEEXQA77WWJ"
+otp = generate_otp(secret)
+print(otp)
+cache_otp(r, "pookie", otp)
+print(validate_user_2FA("pookie", otp))
