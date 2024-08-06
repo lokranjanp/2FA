@@ -1,10 +1,6 @@
 import pyotp
-import smtplib
 import random
 import json
-from email.mime.text import MIMEText
-
-# fetch user secret from mysql
 
 def generate_otp(user_secret):
     counter = random.randint(0, 696969)

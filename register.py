@@ -5,6 +5,7 @@ from mysql.connector import *
 from datetime import datetime
 import bcrypt
 from otp import *
+from otpmail import *
 
 def hash_password(password):
     """Returns a hashed password during user auth detail registrations"""
@@ -100,12 +101,3 @@ def validate_user_2FA(username, otp):
     except Error as e:
         print(f"OTP AUTH failed.")
         return False
-
-
-# print(register_user("pookie", "test@gmail.com", "password"))
-r = redis.StrictRedis(host='localhost', port=6379, db=7)
-secret = "M7XMKKHO3AJBFNI6VAMCZWEEXQA77WWJ"
-otp = generate_otp(secret)
-print(otp)
-cache_otp(r, "pookie", otp)
-print(validate_user_2FA("pookie", otp))
