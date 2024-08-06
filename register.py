@@ -1,7 +1,7 @@
 import dotenv
 import pyotp
 import mysql.connector
-from mysql.connector import Error
+from mysql.connector import *
 from datetime import datetime
 import bcrypt
 
@@ -12,16 +12,17 @@ def hash_password(password):
     return hashed_password, user_salt
 
 def authenticate_user(stored_hash, input_password):
+    """Authenticates the user during login"""
     # Hash the input password and compare it to the stored hash
     if bcrypt.checkpw(input_password.encode('utf-8'), stored_hash.encode('utf-8')):
-        print("Authentication successful!")
+        print("Authentication successful")
         return True
     else:
         print("Authentication failed. Incorrect password.")
         return False
 
-
 def create_connection():
+    """Creates a connection to the MySQL database"""
     path = ".env"
     try:
         connection = mysql.connector.connect(
@@ -39,6 +40,7 @@ def create_connection():
         return None
 
 def register_user(username, email, password):
+    """Registers a user and stores the data in the SQL Database"""
     connection = create_connection()
     if connection is None:
         return False
@@ -63,6 +65,7 @@ def register_user(username, email, password):
         connection.close()
 
 def validate_user(username, password):
+    """User validation without 2FA"""
     connection = create_connection()
     if connection is None:
         return False
@@ -84,5 +87,5 @@ def validate_user(username, password):
         cursor.close()
         connection.close()
 
-print(register_user("pookie", "test@gmail.com", "password"))
+# print(register_user("pookie", "test@gmail.com", "password"))
 print(validate_user("pookie", "password"))

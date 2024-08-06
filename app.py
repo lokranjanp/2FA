@@ -1,7 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_mail import Mail, Message
-import bcrypt
-import random
 import os
 
 app = Flask(__name__)
