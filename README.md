@@ -8,8 +8,8 @@ This motivated me to start using 2FA on many platforms that had personal and imp
 On a random day I felt like trying to implement my own 2FA system. 
 
 ## Implementation
-I have used Flask for web interface.
-To generate 2FA code I have user pytop libraries.
+- I have used Flask for web interface.
+- To generate 2FA code I have used pytop libraries.
 
 MySql seemed the best choice for storing auth data persistently.
 To store 2FA codes temporarily until expiration or its intended use, I have used Redis.
@@ -32,6 +32,6 @@ Since Redis provides faster caching and access times along with temporary storag
 I will try to include famous Auth services like Google Authenticator or Microsoft Authenticator for 2FA code generation.
 
 ## Conclusion
-This whole project from thought to implementation to deployment was a good experience to learn about database, data handling,
+- This whole project from thought to implementation to deployment was a good experience to learn about database, data handling,
 data security and a bit of web development too.
-Special thanks to Dr. Suhaas K P for teaching the course Cryptography and Network Security and making it very interesting.
+- Special thanks to Dr. Suhaas K P for teaching the course Cryptography and Network Security and making it interesting.
