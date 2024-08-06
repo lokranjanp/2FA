@@ -2,8 +2,24 @@ import dotenv
 import pyotp
 import mysql.connector
 from mysql.connector import Error
-from hashlib import sha256
 from datetime import datetime
+import bcrypt
+
+def hash_password(password):
+    """Returns a hashed password during user auth detail registrations"""
+    user_salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), user_salt)
+    return hashed_password, user_salt
+
+def authenticate_user(stored_hash, input_password):
+    # Hash the input password and compare it to the stored hash
+    if bcrypt.checkpw(input_password.encode('utf-8'), stored_hash.encode('utf-8')):
+        print("Authentication successful!")
+        return True
+    else:
+        print("Authentication failed. Incorrect password.")
+        return False
+
 
 def create_connection():
     path = ".env"
@@ -31,9 +47,10 @@ def register_user(username, email, password):
         cursor = connection.cursor()
         created_at = datetime.now()
         user_otp_secret = pyotp.random_base32()
-        hashed_password = sha256(password.encode('utf-8')).hexdigest()
-        cursor.execute("INSERT INTO users (username, email, password_hash, otp_secret, created_at) "
-                       "VALUES (%s, %s, %s, %s, %s)", (username, email, hashed_password, user_otp_secret, created_at))
+        hashed_password, user_salt = hash_password(password)
+        cursor.execute("INSERT INTO users (username, email, password_hash, otp_secret, created_at ,user_salt) "
+                       "VALUES (%s, %s, %s, %s, %s, %s)",
+                       (username, email, hashed_password, user_otp_secret, created_at, user_salt))
         connection.commit()
         return True
 
@@ -52,17 +69,12 @@ def validate_user(username, password):
 
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT u.password_hash FROM users u WHERE username = %s", (username,))
+        cursor.execute("SELECT u.password_hash, u.user_salt FROM users u WHERE username = %s", (username,))
         user = cursor.fetchone()
 
-        if user is None:
-            return False
-
-        hashed_password = sha256(password.encode('utf-8')).hexdigest()
-        if user[0] == hashed_password:
-            return True
-
-        return False
+        if user:
+            stored_hash, stored_salt = user
+            return authenticate_user(stored_hash, password)
 
     except Error as e:
         print(f"Error: {e}")
@@ -72,3 +84,5 @@ def validate_user(username, password):
         cursor.close()
         connection.close()
 
+print(register_user("pookie", "test@gmail.com", "password"))
+print(validate_user("pookie", "password"))
