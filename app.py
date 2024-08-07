@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, make_response
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -12,6 +12,10 @@ users = {
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    # Redirect to dashboard if already logged in
+    if 'email' in session:
+        return redirect(url_for('dashboard'))
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -22,9 +26,15 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid email or password', 'error')
-    return render_template('login.html')
 
-@app.route('/home')
+    # Set cache control headers to prevent caching of the login page
+    response = make_response(render_template('login.html'))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+@app.route('/dashboard')
 def dashboard():
     if 'email' not in session:
         return redirect(url_for('login'))
