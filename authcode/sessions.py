@@ -3,7 +3,7 @@ import dotenv
 
 # Session management functions using cache with Redis
 
-path = ".env"
+path = "../.env"
 r = redis.StrictRedis(host=dotenv.get_key(path, "REDIS_HOST"),
                                  port=dotenv.get_key(path, "REDIS_PORT"),
                                  db=dotenv.get_key(path, "REDIS_DB"))

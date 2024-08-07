@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 import dotenv
-path = ".env"
+path = "../.env"
 
 def send_mail(recipient_email, otp):
     """Sends an email to recipient's email with the OTP for 2FA"""

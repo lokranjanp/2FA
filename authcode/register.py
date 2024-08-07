@@ -25,7 +25,7 @@ def authenticate_user(stored_hash, input_password):
 
 def create_connection():
     """Creates a connection to the MySQL database"""
-    path = ".env"
+    path = "../.env"
     try:
         connection = mysql.connector.connect(
             host=dotenv.get_key(path, 'DB_HOST'),
