@@ -3,12 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# Dummy user data (in a real application, use a database)
-users = {
-    "user@example.com": {
-        "password": "password123"
-    }
-}
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():

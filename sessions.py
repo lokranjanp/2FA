@@ -27,3 +27,13 @@ def check_status(username):
     session_key = f"user_session:{username}"
     return r.exists(session_key)
 
+
+def get_logged_in_users():
+    # Pattern to match all user session keys
+    session_pattern = "user_session:*"
+    # Get all keys that match the session pattern
+    session_keys = r.keys(session_pattern)
+    # Extract user IDs from the session keys
+    logged_in_users = [key.decode('utf-8').split(':')[1] for key in session_keys]
+
+    return logged_in_users
