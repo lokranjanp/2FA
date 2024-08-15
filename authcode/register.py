@@ -8,14 +8,30 @@ from otp import *
 from otpmail import *
 
 def hash_password(password):
-    """Returns a hashed password during user auth detail registrations"""
+    """
+    Hashes a password using bcrypt.
+
+    Args:
+        password (str): The plain text password to be hashed.
+
+    Returns:
+        tuple: A tuple containing the hashed password and the salt used.
+    """
     user_salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), user_salt)
     return hashed_password, user_salt
 
 def authenticate_user(stored_hash, input_password):
-    """Authenticates the user during login"""
-    # Hash the input password and compare it to the stored hash
+    """
+    Authenticates a user by comparing the stored hash with the input password.
+
+    Args:
+        stored_hash (str): The hashed password stored in the database.
+        input_password (str): The plain text password input by the user.
+
+    Returns:
+        bool: True if authentication is successful, False otherwise.
+    """
     if bcrypt.checkpw(input_password.encode('utf-8'), stored_hash.encode('utf-8')):
         print("Authentication successful")
         return True
@@ -24,7 +40,12 @@ def authenticate_user(stored_hash, input_password):
         return False
 
 def create_connection():
-    """Creates a connection to the MySQL database"""
+    """
+    Creates a connection to the MySQL database using credentials from a .env file.
+
+    Returns:
+        mysql.connector.connection.MySQLConnection: The database connection object if successful, None otherwise.
+    """
     path = "../.env"
     try:
         connection = mysql.connector.connect(
@@ -42,7 +63,17 @@ def create_connection():
         return None
 
 def register_user(username, email, password):
-    """Registers a user and stores the data in the SQL Database"""
+    """
+    Registers a new user by storing their details in the SQL database.
+
+    Args:
+        username (str): The username of the new user.
+        email (str): The email address of the new user.
+        password (str): The plain text password of the new user.
+
+    Returns:
+        bool: True if registration is successful, False otherwise.
+    """
     connection = create_connection()
     if connection is None:
         return False
@@ -67,7 +98,16 @@ def register_user(username, email, password):
         connection.close()
 
 def validate_user(username, password):
-    """User validation without 2FA"""
+    """
+    Validates a user by checking their username and password without 2FA.
+
+    Args:
+        username (str): The username of the user.
+        password (str): The plain text password of the user.
+
+    Returns:
+        bool: True if validation is successful, False otherwise.
+    """
     connection = create_connection()
     if connection is None:
         return False
@@ -90,7 +130,16 @@ def validate_user(username, password):
         connection.close()
 
 def validate_user_2FA(username, otp):
-    """User validation with 2FA"""
+    """
+    Validates a user by checking their username and OTP for 2FA.
+
+    Args:
+        username (str): The username of the user.
+        otp (str): The one-time password for 2FA.
+
+    Returns:
+        bool: True if validation is successful, False otherwise.
+    """
     r = redis.StrictRedis(host='localhost', port=6379, db=7)
 
     try:

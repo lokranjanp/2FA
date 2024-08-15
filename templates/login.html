@@ -4,20 +4,30 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Login</title>
-    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <style>
+      .error {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+    </style>
   </head>
   <body>
     <div class="wrapper">
       <div class="title"><span>Login Form</span></div>
-      <form action="#">
+      <form id="loginForm" method="POST" action="/login">
         <div class="row">
           <i class="fas fa-user"></i>
-          <input type="text" placeholder="Email or Phone" required />
+          <input type="text" name="email" id="email" placeholder="Email or Phone" required />
+          <span class="error" id="emailError"></span>
         </div>
         <div class="row">
           <i class="fas fa-lock"></i>
-          <input type="password" placeholder="Password" required />
+          <input type="password" name="password" id="password" placeholder="Password" required />
+          <span class="error" id="passwordError"></span>
         </div>
         <div class="pass"><a href="#">Forgot password?</a></div>
         <div class="row button">
