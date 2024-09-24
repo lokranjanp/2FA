@@ -3,7 +3,7 @@ from email.mime.text import MIMEText
 import dotenv
 
 # Load environment variables from .env file
-path = ".env"
+path = "../.env"
 
 def send_mail(recipient_email, otp):
     """
